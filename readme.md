@@ -5,6 +5,8 @@
 
 显示时间
 
+预览：
+https://www.bilibili.com/video/BV1uaZoYhEWg/
 ### 可选设置
 
 + 更改字体&颜色
