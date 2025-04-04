@@ -21,7 +21,7 @@ https://www.bilibili.com/video/BV1uaZoYhEWg/
 
 注意该[许可证](/license)的规定！
 
-具体以官网的许可证https://www.gnu.org/licenses/gpl-3.0.html为准！
+具体以官网的许可证 https://www.gnu.org/licenses/gpl-3.0.html 为准！
 
 ### 本项目中用到的第三方库
 
