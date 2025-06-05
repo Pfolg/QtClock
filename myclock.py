@@ -8,6 +8,7 @@ TIME 2025/3/30 0:36
 """
 import json
 import os.path
+import socket
 import sys
 
 from PySide6 import QtCore
@@ -15,7 +16,7 @@ from PySide6.QtCore import Qt, QTimer, QDateTime
 from PySide6.QtGui import QAction, QIcon, QFont
 from PySide6.QtUiTools import QUiLoader
 from PySide6.QtWidgets import QApplication, QLabel, QWidget, QVBoxLayout, QSystemTrayIcon, QMenu, QPushButton, QSlider, \
-    QCheckBox, QFontDialog, QColorDialog
+    QCheckBox, QFontDialog, QColorDialog, QGraphicsOpacityEffect
 
 
 class RainbowLabel(QLabel):
@@ -155,6 +156,7 @@ class LoadedUI(QWidget):
         self.checkBox: QCheckBox = ui.checkBox
         primary_screen = app.primaryScreen()
         self.screen_geometry = primary_screen.geometry()  # 包括任务栏的区域
+        print(self.screen_geometry)
         # self.screen_geometry = primary_screen.availableGeometry()  # 可用区域（排除任务栏）
         print("screen w&h :", self.screen_geometry.width(), self.screen_geometry.height())
         self.setup()
@@ -165,7 +167,9 @@ class LoadedUI(QWidget):
             "font": self.font,
             "color": self.color,
             "location": self.winLocation,
-            "isRainbow": self.isRainbow
+            "isRainbow": self.isRainbow,
+            "port": setting_data.get("port")
+
         }
         print(mydata)
         font = QFont()
@@ -250,7 +254,7 @@ def SettingUI(data: {}):
 
 
 def set_tray(icon: QSystemTrayIcon):
-    icon.setToolTip("时钟正在运行")
+    icon.setToolTip("QtClock is running")
     menu = QMenu()
     action_quit = QAction(menu)
     action_quit.setText("Quit")
@@ -260,7 +264,7 @@ def set_tray(icon: QSystemTrayIcon):
     action_set.triggered.connect(lambda: SettingUI(setting_data))
     menu.addActions([action_set, action_quit])
     icon.setContextMenu(menu)
-    icon.setIcon(QIcon("clock.ico"))
+    icon.setIcon(QIcon("QC.png"))
 
 
 def setup_setting():
@@ -269,7 +273,8 @@ def setup_setting():
             "font": "Ubuntu Mono,24,-1,5,500,0,0,0,0,0,0,0,0,0,0,1,Medium",
             "color": "#ffffff",
             "location": [0, 0],
-            "isRainbow": False
+            "isRainbow": False,
+            "port": 20323
         }
         with open("setting.json", "w", encoding="utf-8") as file:
             json.dump(data, file, indent=4, ensure_ascii=False)
@@ -291,10 +296,23 @@ def setup_clock(data: {}):
         root.label.timer1.start(80)
 
 
+def single_instance(port: int):
+    try:
+        # 选择一个不常用的端口
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind(("127.0.0.1", port))
+    except socket.error:
+        print("另一个实例正在运行，退出。")
+        sys.exit(1)
+    return sock
+
+
 if __name__ == '__main__':
     # 格式 "00\n00:00\n0000-00-00 00:00:00\n    Saturday    00:00\n00"
     setting_data = setup_setting()
     print(setting_data)
+    # 单实例限制
+    lock_socket = single_instance(setting_data.get("port"))
     app = QApplication(sys.argv)
     root = MainWindow()
     # 启用透明度

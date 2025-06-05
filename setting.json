@@ -1,0 +1,10 @@
+{
+    "font": "Maple Mono NF CN,24,-1,5,700,1,0,0,0,0,0,0,0,0,0,1,Bold Italic",
+    "color": "#ffffff",
+    "location": [
+        6,
+        342
+    ],
+    "isRainbow": false,
+    "port": 20323
+}
