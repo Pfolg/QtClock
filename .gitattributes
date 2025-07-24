@@ -75,3 +75,4 @@
 *.sql linguist-language=Python
 *.uml linguist-language=Python 
 *.cmd linguist-language=Python 
+*.tox linguist-language=Python 
